@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ClearKey DASH Player</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body { margin: 0; background: #000; display:flex; align-items:center; justify-content:center; height:100vh; }
+    #video { width:100%; max-width:980px; height:auto; outline:none; background:#000; }
+  </style>
+</head>
+<body>
+  <video id="video" controls autoplay playsinline muted></video>
+
+  <!-- dash.js -->
+  <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+  <script>
+    // Your MPD URL
+    const mpdUrl = "https://ottb.live.cf.ww.aiv-cdn.net/sin-nitro/live/dash/enc/jr0zvtazlv/out/v1/6bae9634f7594a738530656284177423/cenc.mpd";
+
+    // Converted to Base64URL (no padding) — ready for ClearKey
+    const keyId_b64url = "LOLn0K-BP9Jsb-C1kgHO1Q";
+    const key_b64url   = "FBb2nakPYnNaZSGq5GHddA";
+
+    const video = document.getElementById('video');
+
+    const player = dashjs.MediaPlayer().create();
+    player.initialize(video, null, true);
+
+    // Attach ClearKey protection data. Dash.js will use EME with org.w3.clearkey.
+    player.setProtectionData({
+      "org.w3.clearkey": {
+        // clearkeys is a map: keyId (base64url) -> key (base64url)
+        "clearkeys": {
+          [keyId_b64url]: key_b64url
+        }
+      }
+    });
+
+    // Start playback
+    player.attachSource(mpdUrl);
+
+    // Helpful logs for debugging
+    player.on(dashjs.MediaPlayer.events.ERROR, function(e) {
+      console.error("dash.js error:", e);
+    });
+    video.addEventListener('error', function(ev){
+      console.error("HTML5 video error:", ev);
+    });
+  </script>
+</body>
+</html>
