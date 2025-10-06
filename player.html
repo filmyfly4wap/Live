@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Star Sports HD1 Hindi | ClearKey Player</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body { margin: 0; background: #000; display:flex; align-items:center; justify-content:center; height:100vh; }
+    video { width:100%; max-width:960px; height:auto; background:#000; outline:none; }
+  </style>
+</head>
+<body>
+  <video id="video" controls autoplay playsinline muted></video>
+
+  <!-- dash.js -->
+  <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+  <script>
+    // === Your Stream Info ===
+    const mpdUrl = "https://jiotvpllive.cdn.jio.com/bpk-tv/Star_Sports_HD1_Hindi_BTS/output/index.mpd";
+
+    // Convert hex -> Base64URL (no padding)
+    const keyId_b64url = "QAExmUtEXYyIFyAiSHYP2g"; // 400131994b445d8c8817202248760fda
+    const key_b64url   = "LVbLbwenW5r_Fl1TSuK_wQ"; // 2d56cb6f07a75b9aff165d534ae2bfc4
+
+    const video = document.getElementById("video");
+    const player = dashjs.MediaPlayer().create();
+    player.initialize(video, null, true);
+
+    // === ClearKey DRM Setup ===
+    player.setProtectionData({
+      "org.w3.clearkey": {
+        "clearkeys": {
+          [keyId_b64url]: key_b64url
+        }
+      }
+    });
+
+    // Load the DASH manifest
+    player.attachSource(mpdUrl);
+
+    // Optional: Log any errors for debugging
+    player.on(dashjs.MediaPlayer.events.ERROR, e => console.error("DASH.js Error:", e));
+  </script>
+</body>
+</html>
